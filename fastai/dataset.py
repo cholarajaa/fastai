@@ -22,7 +22,12 @@ def resize_img(fname, targ, path, new_path):
     ratio = targ/min(r,c)
     sz = (scale_to(r, ratio, targ), scale_to(c, ratio, targ))
     os.makedirs(os.path.split(dest)[0], exist_ok=True)
-    im.resize(sz, Image.LINEAR).save(dest)
+    try:
+        im.resize(sz, Image.LINEAR).save(dest)
+    except Exception as e:
+        print(fname)
+        print(e)
+        
 
 def resize_imgs(fnames, targ, path, new_path):
     if not os.path.exists(os.path.join(path,new_path,str(targ),fnames[0])):
@@ -165,6 +170,15 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         x,y = self.get_x(idx),self.get_y(idx)
+#         Added this to find location where tawkify images were corrupted
+#         a = None
+#         try:
+#             a = self.get(self.transform, x, y)
+#         except Exception as e:
+#             print(e)
+#             print(y)
+#             print(idx)
+#         return a
         return self.get(self.transform, x, y)
 
     def __len__(self): return self.n
