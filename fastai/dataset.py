@@ -175,9 +175,8 @@ class BaseDataset(Dataset):
 #         try:
 #             a = self.get(self.transform, x, y)
 #         except Exception as e:
+#             print('The idx of the row is:', idx)
 #             print(e)
-#             print(y)
-#             print(idx)
 #         return a
         return self.get(self.transform, x, y)
 
@@ -254,6 +253,20 @@ class FilesDataset(BaseDataset):
     def resize_imgs(self, targ, new_path):
         dest = resize_imgs(self.fnames, targ, self.path, new_path)
         return self.__class__(self.fnames, self.y, self.transform, dest)
+
+    
+    def __getitem__(self, idx):
+        x,y = self.get_x(idx),self.get_y(idx)
+#         Added this to find location where tawkify images were corrupted
+        a = None
+        try:
+            a = self.get(self.transform, x, y)
+        except Exception as e:
+            print('The idx of the row is:', idx)
+            print('The file name is:', self.fnames[idx])
+            print(e)
+        return a
+#         return self.get(self.transform, x, y)
 
     def denorm(self,arr):
         """Reverse the normalization done to a batch of images.
