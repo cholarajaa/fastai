@@ -43,6 +43,7 @@ class DataLoader(object):
 
         self.sampler = sampler
         self.batch_sampler = batch_sampler
+        self.lazy_loader = False
 
     def __len__(self): return len(self.batch_sampler)
 
@@ -78,8 +79,82 @@ class DataLoader(object):
             for batch in map(self.get_batch, iter(self.batch_sampler)):
                 yield get_tensor(batch, self.pin_memory)
         else:
-            with ThreadPoolExecutor(max_workers=self.num_workers) as e:
-                # avoid py3.6 issue where queue is infinite and can result in memory exhaustion
-                for c in chunk_iter(iter(self.batch_sampler), self.num_workers*10):
-                    for batch in e.map(self.get_batch, c): yield get_tensor(batch, self.pin_memory)
+            with LazyThreadPoolExecutor(max_workers=self.num_workers) as e:
+                if self.lazy_loader:
+                    print('Using lazy threadpool- no batch')
+                    for batch in e.map(self.get_batch, iter(self.batch_sampler)):
+                        yield get_tensor(batch, self.pin_memory)
+                else:
+                    print('Chunking instead')
+                    # avoid py3.6 issue where queue is infinite and can result in memory exhaustion
+                    for c in chunk_iter(iter(self.batch_sampler), self.num_workers*10):
+                        for batch in e.map(self.get_batch, c): yield get_tensor(batch, self.pin_memory)
 
+
+
+import collections
+import itertools
+import logging
+import threading
+import time
+
+class LazyThreadPoolExecutor(ThreadPoolExecutor):
+    def map(self, fn, *iterables, timeout=None, chunksize=1, prefetch=None):
+        """Returns an iterator equivalent to map(fn, iter).
+        Args:
+            fn: A callable that will take as many arguments as there are
+                passed iterables.
+            timeout: The maximum number of seconds to wait. If None, then there
+                is no limit on the wait time.
+            chunksize: The size of the chunks the iterable will be broken into
+                before being passed to a child process. This argument is only
+                used by ProcessPoolExecutor; it is ignored by
+                ThreadPoolExecutor.
+        Returns:
+            An iterator equivalent to: map(func, *iterables) but the calls may
+            be evaluated out-of-order.
+        Raises:
+            TimeoutError: If the entire result iterator could not be generated
+                before the given timeout.
+            Exception: If fn(*args) raises for any values.
+        """
+        if timeout is not None:
+            end_time = timeout + time.time()
+        if prefetch is None:
+            prefetch = self._max_workers
+        if prefetch < 0:
+            raise ValueError("prefetch count may not be negative")
+
+        argsiter = zip(*iterables)
+
+        fs = collections.deque(self.submit(fn, *args) for args in itertools.islice(argsiter, self._max_workers + prefetch))
+
+        # Yield must be hidden in closure so that the futures are submitted
+        # before the first iterator value is required.
+        def result_iterator():
+            nonlocal argsiter
+            try:
+                while fs:
+                    if timeout is None:
+                        res = fs[0].result()
+                    else:
+                        res = fs[0].result(end_time - time.time())
+
+                    # Got a result, future needn't be cancelled
+                    del fs[0]
+
+                    # Dispatch next task before yielding to keep
+                    # pipeline full
+                    if argsiter:
+                        try:
+                            args = next(argsiter)
+                        except StopIteration:
+                            argsiter = None
+                        else:
+                            fs.append(self.submit(fn, *args))
+
+                    yield res
+            finally:
+                for future in fs:
+                    future.cancel()
+        return result_iterator()
