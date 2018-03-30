@@ -39,10 +39,12 @@ def to_np(v):
     if isinstance(v, (np.ndarray, np.generic)): return v
     if isinstance(v, (list,tuple)): return [to_np(o) for o in v]
     if isinstance(v, Variable): v=v.data
+    if isinstance(v, torch.HalfTensor): v=v.float()
     return v.cpu().numpy()
 
 USE_GPU=True
 def to_gpu(x, *args, **kwargs):
+    if isinstance(x, torch.FloatTensor): x = x.half()
     return x.cuda(*args, **kwargs) if torch.cuda.is_available() and USE_GPU else x
 
 def noop(*args, **kwargs): return

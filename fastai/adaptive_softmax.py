@@ -36,10 +36,10 @@ class AdaptiveSoftmax(nn.Module):
         return output
 
     def log_prob(self, input):
-        lsm = nn.LogSoftmax().cuda()
+        lsm = nn.LogSoftmax().half().cuda()
         head_out = self.head(input)
         batch_size = head_out.size(0)
-        prob = torch.zeros(batch_size, self.cutoff[-1]).cuda()
+        prob = torch.zeros(batch_size, self.cutoff[-1]).half().cuda()
         lsm_head = lsm(head_out)
         prob.narrow(1, 0, self.output_size).add_(lsm_head.narrow(1, 0, self.output_size).data)
         for i in range(len(self.tail)):
