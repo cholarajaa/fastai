@@ -311,7 +311,15 @@ class ModelData():
     def trn_y(self): return self.trn_ds.y
     @property
     def val_y(self): return self.val_ds.y
-
+    
+    def half(self): 
+        if self.trn_dl is not None: self.trn_dl.fp16 = True
+        if self.val_dl is not None: self.val_dl.fp16 = True
+        if self.test_dl is not None: self.test_dl.fp16 = True
+    def float(self): 
+        if self.trn_dl is not None: self.trn_dl.fp16 = False
+        if self.val_dl is not None: self.val_dl.fp16 = False
+        if self.test_dl is not None: self.test_dl.fp16 = False
 
 class ImageData(ModelData):
     def __init__(self, path, datasets, bs, num_workers, classes):

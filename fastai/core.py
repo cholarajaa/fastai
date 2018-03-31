@@ -10,14 +10,15 @@ conv_dict = {np.dtype('int8'): torch.LongTensor, np.dtype('int16'): torch.LongTe
 def A(*a):
     return np.array(a[0]) if len(a)==1 else [np.array(o) for o in a]
 
-def T(a):
+def T(a, fp16=False):
     if torch.is_tensor(a): res = a
     else:
         a = np.array(np.ascontiguousarray(a))
         if a.dtype in (np.int8, np.int16, np.int32, np.int64):
             res = torch.LongTensor(a.astype(np.int64))
         elif a.dtype in (np.float32, np.float64):
-            res = torch.FloatTensor(a.astype(np.float32))
+            af = a.astype(np.float32)
+            res = torch.FloatTensor(af) if not fp16 else torch.HalfTensor(af)
         else: raise NotImplementedError(a.dtype)
     return to_gpu(res, async=True)
 
@@ -39,12 +40,11 @@ def to_np(v):
     if isinstance(v, (np.ndarray, np.generic)): return v
     if isinstance(v, (list,tuple)): return [to_np(o) for o in v]
     if isinstance(v, Variable): v=v.data
-    if isinstance(v, torch.HalfTensor): v=v.float()
+    if isinstance(v, torch.cuda.HalfTensor): v=v.float()
     return v.cpu().numpy()
 
 USE_GPU=True
 def to_gpu(x, *args, **kwargs):
-    if isinstance(x, torch.FloatTensor): x = x.half()
     return x.cuda(*args, **kwargs) if torch.cuda.is_available() and USE_GPU else x
 
 def noop(*args, **kwargs): return
