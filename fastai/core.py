@@ -17,8 +17,8 @@ def T(a, fp16=False):
         if a.dtype in (np.int8, np.int16, np.int32, np.int64):
             res = torch.LongTensor(a.astype(np.int64))
         elif a.dtype in (np.float32, np.float64):
-            af = a.astype(np.float32)
-            res = torch.FloatTensor(af) if not fp16 else torch.HalfTensor(af)
+            res = torch.FloatTensor(a.astype(np.float32)) 
+            if fp16: res = res.half()
         else: raise NotImplementedError(a.dtype)
     return to_gpu(res, async=True)
 
