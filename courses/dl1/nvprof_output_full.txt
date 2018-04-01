@@ -1,0 +1,99 @@
+==6672== NVPROF is profiling process 6672, command: python testingfp16.py
+==6672== Profiling application: python testingfp16.py
+==6672== Warning: Found 14 invalid records in the result.
+==6672== Warning: This can happen if device ran out of memory or if a device kernel was stopped due to an assertion.
+==6672== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   20.68%  5.35516s      1680  3.1876ms  684.52us  3.5024ms  volta_scudnn_128x64_relu_small_nn_v1
+                   19.76%  5.11508s       661  7.7384ms  1.1200us  129.82ms  [CUDA memcpy HtoD]
+                   15.77%  4.08267s     12529  325.86us  93.949us  1.1547ms  volta_gcgemm_32x32_nt
+                   11.29%  2.92388s       755  3.8727ms  3.4992ms  4.2990ms  void cudnn::detail::explicit_convolve_sgemm<float, int, int=1024, int=6, int=7, int=3, int=3, int=5, int=0, bool=1>(int, int, int, float const *, int, float const , int, cudnn::detail::explicit_convolve_sgemm<float, int, int=1024, int=6, int=7, int=3, int=3, int=5, int=0, bool=1>*, kernel_conv_params, int, int, float, float, int, float const *, float const *)
+                    7.06%  1.82846s     12518  146.07us  36.415us  264.63us  void fft2d_c2r_32x32<float, bool=0, unsigned int=0, bool=0, bool=0>(float*, float2 const *, int, int, int, int, int, int, int, int, int, float, float, cudnn::reduced_divisor, bool, float*, float*)
+                    6.57%  1.70121s     12518  135.90us  40.703us  240.60us  void fft2d_r2c_32x32<float, unsigned int=0, bool=0>(float2*, float const *, int, int, int, int, int, int, int, int, int, cudnn::reduced_divisor, bool)
+                    4.01%  1.03864s      5508  188.57us  32.447us  1.3879ms  void cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1>(float, cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1>, cudnnTensorStruct, float const *, float, cudnnTensorStruct*, float, cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1> const *, cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1> const , cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1> const , cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1> const , cudnn::detail::bn_fw_inf_1C11_kernel_new<float, float, bool=1, int=1>)
+                    3.57%  924.45ms      5049  183.10us  16.224us  1.3588ms  void kernelPointwiseApply1<ThresholdUpdateOutputIP<float>, float, unsigned int, int=-2>(TensorInfo<ThresholdUpdateOutputIP<float>, float>, float, float)
+                    2.71%  702.67ms       151  4.6535ms  4.5994ms  5.0836ms  void cudnn::detail::implicit_convolve_sgemm<float, float, int=1024, int=5, int=5, int=3, int=3, int=3, int=1, bool=1, bool=0, bool=1>(int, int, int, float const *, int, float*, cudnn::detail::implicit_convolve_sgemm<float, float, int=1024, int=5, int=5, int=3, int=3, int=3, int=1, bool=1, bool=0, bool=1>*, kernel_conv_params, int, float, float, int, float, float, int, int)
+                    2.00%  518.81ms      4392  118.13us  1.8230us  494.77us  void kernelPointwiseApply2<TensorAddOp<float>, float, float, unsigned int, int=-2, int=-2>(TensorInfo<TensorAddOp<float>, float>, TensorInfo<float, float>, float, float)
+                    1.13%  293.06ms       153  1.9154ms  776.52us  2.0855ms  void cudnn::detail::implicit_convolve_sgemm<float, float, int=1024, int=6, int=7, int=3, int=3, int=5, int=1, bool=1, bool=0, bool=1>(int, int, int, float const *, int, float*, cudnn::detail::implicit_convolve_sgemm<float, float, int=1024, int=6, int=7, int=3, int=3, int=5, int=1, bool=1, bool=0, bool=1>*, kernel_conv_params, int, float, float, int, float, float, int, int)
+                    1.06%  274.05ms       151  1.8149ms  1.7830ms  1.9857ms  void cudnn::detail::implicit_convolve_sgemm<float, float, int=128, int=6, int=7, int=3, int=3, int=5, int=1, bool=1, bool=0, bool=1>(int, int, int, float const *, int, float*, cudnn::detail::implicit_convolve_sgemm<float, float, int=128, int=6, int=7, int=3, int=3, int=5, int=1, bool=1, bool=0, bool=1>*, kernel_conv_params, int, float, float, int, float, float, int, int)
+                    1.05%  271.34ms       152  1.7851ms  666.41us  1.9266ms  volta_scudnn_128x128_relu_small_nn_v1
+                    0.81%  208.98ms       756  276.43us  269.72us  1.0687ms  void im2col4d_kernel<float, int>(im2col4d_params, cudnnConvolutionStruct, cudnnTensor4dStruct, float const *, float*, int)
+                    0.79%  205.41ms      1993  103.07us  44.575us  435.67us  void fft2d_r2c_32x32<float, unsigned int=1, bool=1>(float2*, float const *, int, int, int, int, int, int, int, int, int, cudnn::reduced_divisor, bool)
+                    0.68%  176.37ms       153  1.1528ms  428.88us  1.1804ms  void MaxPoolForward<float, float>(int, float const *, int, int, int, int, int, int, int, int, int, int, int, int, int, int, float*, long*)
+                    0.25%  64.693ms       305  212.11us  89.341us  239.67us  volta_scudnn_128x128_relu_interior_nn_v1
+                    0.14%  37.483ms       153  244.98us  95.964us  263.13us  void adaptivemaxpool<float>(float*, float*, long*, int, int, int, int, long, long, long)
+                    0.14%  35.042ms       153  229.03us  92.221us  245.53us  void adaptiveaveragepool<float>(float*, float*, int, int, int, int, long, long, long)
+                    0.12%  31.993ms       154  207.75us  90.301us  230.23us  volta_scudnn_128x64_relu_interior_nn_v1
+                    0.08%  20.902ms       306  68.306us  62.174us  74.109us  volta_sgemm_128x64_tn
+                    0.06%  16.050ms       244  65.777us  61.310us  68.637us  volta_sgemm_128x64_nn
+                    0.06%  14.677ms        12  1.2231ms  878.66us  1.7118ms  void cudnn::winograd::winograd3x3Kernel<float, float, int=1, int=4, int=8, bool=0>(cudnn::maxwell::winograd::KernelParams)
+                    0.03%  8.3653ms       244  34.283us  14.367us  36.575us  void cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>(float, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>, cudnnTensorStruct, float const *, float, float const , float, cudnnTensorStruct*, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>*, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const , cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const , cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_bw_1CHW_kernel_new<float, float, bool=1, int=4>)
+                    0.02%  6.4691ms       244  26.512us  19.679us  27.487us  volta_sgemm_128x64_nt
+                    0.02%  5.0282ms      2291  2.1940us  2.0150us  8.9600us  cudnn::gemm::computeOffsetsKernel(cudnn::gemm::ComputeOffsetsParams)
+                    0.01%  3.0909ms       976  3.1660us  1.9840us  12.895us  void kernelPointwiseApply2<TensorCAddOp<float>, float, float, unsigned int, int=-2, int=-2>(TensorInfo<TensorCAddOp<float>, float>, TensorInfo<float, float>, float, float)
+                    0.01%  2.9531ms       976  3.0250us  1.6320us  9.2160us  void kernelPointwiseApply1<TensorMulConstantOp<float>, float, unsigned int, int=-2>(TensorInfo<TensorMulConstantOp<float>, float>, float, float)
+                    0.01%  2.4593ms       244  10.078us  6.4000us  11.168us  void cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4>(float, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4>, cudnnTensorStruct, float const *, float, cudnnTensorStruct*, float, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4> const , double, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4>*, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4> const *, double, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4> const *, cudnn::detail::bn_fw_tr_1CHW_kernel_new<float, float, bool=1, int=4> const *)
+                    0.01%  2.2109ms         1  2.2109ms  2.2109ms  2.2109ms  void cudnn::detail::explicit_convolve_sgemm<float, int, int=128, int=5, int=5, int=3, int=3, int=3, int=0, bool=0>(int, int, int, float const *, int, float const , int, cudnn::detail::explicit_convolve_sgemm<float, int, int=128, int=5, int=5, int=3, int=3, int=3, int=0, bool=0>*, kernel_conv_params, int, int, float, float, int, float const *, float const *)
+                    0.01%  1.8789ms         1  1.8789ms  1.8789ms  1.8789ms  void cudnn::detail::implicit_convolve_sgemm<float, float, int=128, int=5, int=5, int=3, int=3, int=3, int=1, bool=1, bool=0, bool=1>(int, int, int, float const *, int, float*, cudnn::detail::implicit_convolve_sgemm<float, float, int=128, int=5, int=5, int=3, int=3, int=3, int=1, bool=1, bool=0, bool=1>*, kernel_conv_params, int, float, float, int, float, float, int, int)
+                    0.01%  1.7919ms        11  162.90us  156.48us  172.35us  void fft2d_r2c_32x32<float, unsigned int=1, bool=0>(float2*, float const *, int, int, int, int, int, int, int, int, int, cudnn::reduced_divisor, bool)
+                    0.01%  1.5992ms        11  145.38us  141.88us  149.47us  void fft2d_c2r_32x32<float, bool=0, unsigned int=1, bool=0, bool=0>(float*, float2 const *, int, int, int, int, int, int, int, int, int, float, float, cudnn::reduced_divisor, bool, float*, float*)
+                    0.01%  1.5691ms       244  6.4300us  3.6150us  9.1200us  generate_bernoulli(curandStateMtgp32*, int, float*, double)
+                    0.01%  1.4076ms      1374  1.0240us     960ns  1.6960us  [CUDA memset]
+                    0.00%  1.1373ms       306  3.7160us  2.9760us  4.8000us  void cudnn::detail::bn_pointwise<float, float, bool=1, int=2>(float, cudnn::detail::bn_pointwise<float, float, bool=1, int=2>, cudnnTensorStruct, float const *, float, cudnnTensorStruct*, float, cudnn::detail::bn_pointwise<float, float, bool=1, int=2> const *, cudnn::detail::bn_pointwise<float, float, bool=1, int=2> const , double, cudnn::detail::bn_pointwise<float, float, bool=1, int=2>*, cudnn::detail::bn_pointwise<float, float, bool=1, int=2> const *, bool)
+                    0.00%  1.0220ms       153  6.6790us  6.2720us  7.0720us  void cunn_SoftMaxForward<int=2, float, float, LogSoftMaxForwardEpilogue>(float*, float*, int)
+                    0.00%  956.63us       306  3.1260us  2.3360us  3.6790us  void kernelPointwiseApply2<CopyOp<float, float>, float, float, unsigned int, int=-2, int=2>(TensorInfo<float, float>, TensorInfo<CopyOp<float, float>, float>, float, float)
+                    0.00%  885.09us       153  5.7840us  4.9600us  6.1430us  void cunn_ClassNLLCriterion_updateOutput_kernel<float, float>(float*, float*, float*, long*, float*, int, int, int, int, long)
+                    0.00%  876.42us       244  3.5910us  3.4240us  3.8720us  void kernelReduceNoncontigDim_shared<thrust::identity<float>, ReduceAdd<float, float>, ReduceAdd<float, float>, float, float, unsigned int, int=-2, int=-2>(TensorInfo<float, ReduceAdd<float, float>>, TensorInfo<float, ReduceAdd<float, float>>, ReduceAdd<float, float>, ReduceAdd<float, float>, ReduceAdd<float, float>, ReduceAdd<float, float>, float, thrust::identity<float>, float)
+                    0.00%  805.51us       244  3.3010us  2.3680us  4.4160us  void kernelPointwiseApply3<TensorMulOp<float>, float, float, float, unsigned int, int=-2, int=-2, int=-2>(TensorInfo<TensorMulOp<float>, float>, TensorInfo<float, float>, TensorInfo<float, float>, float, float)
+                    0.00%  713.39us       314  2.2710us  1.3120us  6.1750us  [CUDA memcpy DtoD]
+                    0.00%  638.92us       122  5.2370us  4.9280us  5.7600us  void cunn_SoftMaxBackward<int=2, float, float, LogSoftMaxBackwardEpilogue>(float*, float*, float*, int)
+                    0.00%  608.56us       244  2.4940us  1.9200us  3.2000us  void kernelPointwiseApply2<TensorMulOp<float>, float, float, unsigned int, int=-2, int=-2>(TensorInfo<TensorMulOp<float>, float>, TensorInfo<float, float>, float, float)
+                    0.00%  597.00us       153  3.9010us  2.9440us  9.9830us  void CatArrayBatchedCopy<float, unsigned int, int=4>(float*, CatArrInputTensor<float, unsigned int>*, OutputTensorSizeStride<unsigned int, unsigned int=4>, int, unsigned int)
+                    0.00%  526.16us       122  4.3120us  3.3920us  4.6400us  void cunn_ClassNLLCriterion_updateGradInput_kernel<float>(float*, float*, long*, float*, float*, int, int, int, int, long)
+                    0.00%  520.31us       244  2.1320us  1.7600us  9.2480us  void kernelPointwiseApply1<TensorDivConstantOp<float>, float, unsigned int, int=-2>(TensorInfo<TensorDivConstantOp<float>, float>, float, float)
+                    0.00%  395.86us        31  12.769us  12.256us  13.024us  void kernelTransformReduceInnermostDimIndex<float, long, MaxValuePair<float, long>>(float*, long*, float*, unsigned int, unsigned int, thrust::pair<float, long>, float)
+                    0.00%  342.68us       122  2.8080us  2.3360us  9.6320us  void kernelPointwiseApply3<ThresholdUpdateGradInput<float>, float, float, float, unsigned int, int=-2, int=-2, int=-2>(TensorInfo<ThresholdUpdateGradInput<float>, float>, TensorInfo<float, float>, TensorInfo<float, float>, float, float)
+                    0.00%  328.85us       153  2.1490us  1.9200us  2.4000us  void kernelPointwiseApply2<ThresholdUpdateOutput<float>, float, float, unsigned int, int=-2, int=-2>(TensorInfo<ThresholdUpdateOutput<float>, float>, TensorInfo<float, float>, float, float)
+                    0.00%  261.75us       184  1.4220us  1.3430us  2.3680us  [CUDA memcpy DtoH]
+                    0.00%  231.35us        12  19.279us  5.9200us  37.791us  void cudnn::winograd::generateWinogradTilesKernel<int=0, float, float>(cudnn::winograd::GenerateWinogradTilesParams<float, float>)
+                    0.00%  226.10us       124  1.8230us  1.7590us  2.0800us  void kernelPointwiseApply1<TensorFillOp<float>, float, unsigned int, int=-2>(TensorInfo<TensorFillOp<float>, float>, float, float)
+                    0.00%  106.30us        31  3.4290us  3.3280us  3.6160us  void kernelReduceAll<thrust::identity<float>, ReduceAdd<float, float>, ReduceAdd<float, float>, float, float, unsigned int, int=-2>(TensorInfo<float, ReduceAdd<float, float>>, ReduceAdd<float, float>, ReduceAdd<float, float>, float, thrust::identity<float>, float, ReduceAdd<float, float>*)
+                    0.00%  74.942us        31  2.4170us  1.9840us  12.991us  void kernelPointwiseApply3<TensorEQOp<long, unsigned char>, unsigned char, long, long, unsigned int, int=-2, int=-2, int=-2>(TensorInfo<unsigned char, long>, TensorInfo<TensorEQOp<long, unsigned char>, long>, TensorInfo<unsigned char, long>, long, long)
+                    0.00%  61.823us        31  1.9940us  1.9520us  2.0480us  void kernelPointwiseApply2<CopyOp<float, unsigned char>, float, unsigned char, unsigned int, int=-2, int=-2>(TensorInfo<unsigned char, float>, TensorInfo<CopyOp<float, unsigned char>, float>, float, float)
+                    0.00%  48.254us         2  24.127us  20.831us  27.423us  generate_normal(curandStateMtgp32*, int, float*, double, double)
+      API calls:   58.92%  14.0814s      1149  12.255ms  6.4180us  130.02ms  cudaMemcpyAsync
+                   18.58%  4.43908s        44  100.89ms  6.4540us  4.42904s  cudaMalloc
+                    7.00%  1.67345s         8  209.18ms  39.049us  1.67316s  cudaStreamCreateWithFlags
+                    5.35%  1.27782s     67856  18.831us  6.0540us  16.855ms  cudaLaunch
+                    3.73%  891.01ms    887489  1.0030us      13ns  17.600ms  cudaSetupArgument
+                    2.55%  610.15ms         3  203.38ms  1.2510us  610.14ms  cudaFree
+                    1.51%  359.72ms    256418  1.4020us     201ns  23.501ms  cudaGetDevice
+                    0.72%  171.47ms     44417  3.8600us  1.5150us  20.287ms  cudaStreamWaitEvent
+                    0.48%  115.01ms     37432  3.0720us     718ns  16.123ms  cudaEventRecord
+                    0.28%  67.983ms     67855  1.0010us      12ns  4.7272ms  cudaConfigureCall
+                    0.24%  57.500ms     30108  1.9090us     532ns  7.4478ms  cudaSetDevice
+                    0.24%  57.402ms     71560     802ns      23ns  332.35us  cudaGetLastError
+                    0.13%  31.215ms      1374  22.718us  9.1980us  990.32us  cudaMemsetAsync
+                    0.08%  18.461ms      1966  9.3890us  2.2670us  952.37us  cudaBindTexture
+                    0.06%  14.443ms      2145  6.7330us  1.7600us  4.2784ms  cudaEventDestroy
+                    0.03%  8.1572ms      1993  4.0920us  2.0910us  221.98us  cudaEventCreate
+                    0.03%  6.9185ms       376  18.400us  4.7240us  1.3547ms  cudaStreamSynchronize
+                    0.02%  4.9698ms       427  11.638us  4.1030us  38.318us  cudaEventQuery
+                    0.02%  3.6889ms      1966  1.8760us     769ns  29.372us  cudaUnbindTexture
+                    0.02%  3.6728ms         2  1.8364ms  1.4565ms  2.2163ms  cudaHostAlloc
+                    0.01%  1.3784ms      1236  1.1150us     362ns  18.585us  cudaGetDeviceCount
+                    0.00%  642.14us       194  3.3100us     930ns  26.279us  cudaEventCreateWithFlags
+                    0.00%  600.80us       276  2.1760us     368ns  58.153us  cuDeviceGetAttribute
+                    0.00%  531.95us         3  177.32us  171.65us  182.18us  cuDeviceTotalMem
+                    0.00%  433.76us         4  108.44us  103.57us  113.20us  cudaGetDeviceProperties
+                    0.00%  189.82us        10  18.982us  7.0980us  47.555us  cudaMemcpy
+                    0.00%  177.33us         1  177.33us  177.33us  177.33us  cudaStreamCreateWithPriority
+                    0.00%  104.22us        64  1.6280us  1.1030us  4.6960us  cudaFuncSetAttribute
+                    0.00%  101.12us         3  33.706us  16.542us  60.812us  cuDeviceGetName
+                    0.00%  37.371us        37  1.0100us     616ns  2.6870us  cudaDeviceGetAttribute
+                    0.00%  4.9090us         1  4.9090us  4.9090us  4.9090us  cudaHostGetDevicePointer
+                    0.00%  4.8230us         5     964ns     539ns  1.4750us  cuDeviceGetCount
+                    0.00%  3.6490us         4     912ns     520ns  1.5350us  cuDeviceGet
+                    0.00%  2.9130us         2  1.4560us  1.2550us  1.6580us  cuInit
+                    0.00%  2.5380us         1  2.5380us  2.5380us  2.5380us  cudaDeviceGetStreamPriorityRange
+                    0.00%  1.9550us         2     977ns     797ns  1.1580us  cuDriverGetVersion
