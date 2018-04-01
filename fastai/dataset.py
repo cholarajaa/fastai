@@ -316,10 +316,12 @@ class ModelData():
         if self.trn_dl is not None: self.trn_dl.fp16 = True
         if self.val_dl is not None: self.val_dl.fp16 = True
         if self.test_dl is not None: self.test_dl.fp16 = True
+        return self
     def float(self): 
         if self.trn_dl is not None: self.trn_dl.fp16 = False
         if self.val_dl is not None: self.val_dl.fp16 = False
         if self.test_dl is not None: self.test_dl.fp16 = False
+        return self
 
 class ImageData(ModelData):
     def __init__(self, path, datasets, bs, num_workers, classes):
