@@ -46,46 +46,23 @@ class Stepper():
             if self.fp16: self.fp32_params = copy_model_to_fp32(self.m, self.opt)
 
     def step(self, xs, y, epoch):
-        if self.fp16: return self.step_fp16(xs, y, epoch)
         xtra = []
-#         torch.cuda.synchronize()
-#         t1 = time.time()
         output = self.m(*xs)
         if isinstance(output,tuple): output,*xtra = output
-        loss = raw_loss = self.crit(output, y)
-        if self.reg_fn: loss = self.reg_fn(output, xtra, raw_loss)
-        self.opt.zero_grad()
-        loss.backward()
-        if self.clip:   # Gradient clipping
-            nn.utils.clip_grad_norm(trainable_params_(self.m), self.clip)
-        self.opt.step()
-#         torch.cuda.synchronize()
-#         t2 = time.time()
-#         print('Time:', t2-t1)
-        return raw_loss.data[0]
-    
-    
-    def step_fp16(self, xs, y, epoch):
-        xtra = []
-        torch.cuda.synchronize()
-#         t1 = time.time()
-        output = self.m(*xs)
-        if isinstance(output,tuple): output,*xtra = output
+        if self.fp16: self.m.zero_grad()
+        else: self.opt.zero_grad() 
         loss = raw_loss = self.crit(output, y)
         if self.loss_scale != 1: loss = loss*self.loss_scale
         if self.reg_fn: loss = self.reg_fn(output, xtra, raw_loss)
-        self.m.zero_grad()
         loss.backward()
-        update_fp32_grads(self.fp32_params, self.m)
-        if self.loss_scale != 1:
+        if self.fp16: update_fp32_grads(self.fp32_params, self.m)
+        if self.loss_scale != 1: 
             for param in self.fp32_params: param.grad.data.div_(self.loss_scale)
         if self.clip:   # Gradient clipping
-            nn.utils.clip_grad_norm(trainable_params_(self.fp32_params), self.clip)
+            nn.utils.clip_grad_norm(trainable_params_(self.m), self.clip)
         self.opt.step()
-        copy_fp32_to_model(self.m, self.fp32_params)
+        if self.fp16: copy_fp32_to_model(self.m, self.fp32_params)
         torch.cuda.synchronize()
-#         t2 = time.time()
-#         print('Time:', t2-t1)
         return raw_loss.data[0]
 
     def evaluate(self, xs, y):
