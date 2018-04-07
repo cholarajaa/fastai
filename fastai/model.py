@@ -4,6 +4,8 @@ from .core import *
 from .layer_optimizer import *
 from .fp16 import *
 
+torch.backends.cudnn.benchmark=True
+
 def cut_model(m, cut):
     return list(m.children())[:cut] if cut else [m]
 
@@ -29,11 +31,12 @@ def num_features(m):
 class Stepper():
     def __init__(self, m, opt, crit, clip=0, reg_fn=None, fp16=False, loss_scale=1):
         self.m,self.opt,self.crit,self.clip,self.reg_fn = m,opt,crit,clip,reg_fn
+        self.fp16 = fp16
         self.reset(True)
         
-        self.fp16 = fp16
         self.loss_scale = loss_scale if fp16 else 1
-        if self.fp16: self.fp32_params = copy_model_to_fp32(m, opt)
+        if self.fp16: 
+            self.fp32_params = copy_model_to_fp32(m, opt)
         
     def reset(self, train=True):
         if train: apply_leaf(self.m, set_train_mode)
@@ -45,26 +48,33 @@ class Stepper():
     def step(self, xs, y, epoch):
         if self.fp16: return self.step_fp16(xs, y, epoch)
         xtra = []
+#         torch.cuda.synchronize()
+#         t1 = time.time()
         output = self.m(*xs)
         if isinstance(output,tuple): output,*xtra = output
-        self.opt.zero_grad()
         loss = raw_loss = self.crit(output, y)
         if self.reg_fn: loss = self.reg_fn(output, xtra, raw_loss)
+        self.opt.zero_grad()
         loss.backward()
         if self.clip:   # Gradient clipping
             nn.utils.clip_grad_norm(trainable_params_(self.m), self.clip)
         self.opt.step()
+#         torch.cuda.synchronize()
+#         t2 = time.time()
+#         print('Time:', t2-t1)
         return raw_loss.data[0]
     
     
     def step_fp16(self, xs, y, epoch):
         xtra = []
+        torch.cuda.synchronize()
+#         t1 = time.time()
         output = self.m(*xs)
         if isinstance(output,tuple): output,*xtra = output
-        self.m.zero_grad()
         loss = raw_loss = self.crit(output, y)
         if self.loss_scale != 1: loss = loss*self.loss_scale
         if self.reg_fn: loss = self.reg_fn(output, xtra, raw_loss)
+        self.m.zero_grad()
         loss.backward()
         update_fp32_grads(self.fp32_params, self.m)
         if self.loss_scale != 1:
@@ -73,6 +83,9 @@ class Stepper():
             nn.utils.clip_grad_norm(trainable_params_(self.fp32_params), self.clip)
         self.opt.step()
         copy_fp32_to_model(self.m, self.fp32_params)
+        torch.cuda.synchronize()
+#         t2 = time.time()
+#         print('Time:', t2-t1)
         return raw_loss.data[0]
 
     def evaluate(self, xs, y):

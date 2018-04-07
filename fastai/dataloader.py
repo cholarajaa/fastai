@@ -3,13 +3,14 @@ from torch.utils.data.sampler import SequentialSampler, RandomSampler, BatchSamp
 from .imports import *
 from .core import *
 import collections,sys,traceback,threading
+# from .executors import LazyThreadPoolExecutor
 
 string_classes = (str, bytes)
 
 
 def get_tensor(batch, pin):
     if isinstance(batch, (np.ndarray, np.generic)):
-        batch = T(batch).contiguous()
+        batch = T(batch, not pin).contiguous()
         return batch.pin_memory() if pin else batch
     elif isinstance(batch, string_classes): return batch
     elif isinstance(batch, collections.Mapping):
@@ -78,6 +79,10 @@ class DataLoader(object):
             for batch in map(self.get_batch, iter(self.batch_sampler)):
                 yield get_tensor(batch, self.pin_memory)
         else:
+#             with LazyThreadPoolExecutor(max_workers=self.num_workers) as e:
+#                 for batch in e.map(self.get_batch, iter(self.batch_sampler)):
+#                     yield get_tensor(batch, self.pin_memory)
+
             with ThreadPoolExecutor(max_workers=self.num_workers) as e:
                 # avoid py3.6 issue where queue is infinite and can result in memory exhaustion
                 for c in chunk_iter(iter(self.batch_sampler), self.num_workers*10):

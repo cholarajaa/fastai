@@ -5,6 +5,7 @@ import torch.nn as nn
 class FP16(nn.Module):
     def __init__(self, module): 
         super(FP16, self).__init__()
+        self.half()
         self.module = batchnorm_to_fp32(module.half())
         
     def forward(self, input): 
@@ -15,7 +16,7 @@ class FP16(nn.Module):
 
     def state_dict(self, *inputs, **kwargs):
         return self.module.state_dict(*inputs, **kwargs)
-
+    
 def batchnorm_to_fp32(module):
     '''
     BatchNorm layers to have parameters in single precision.
