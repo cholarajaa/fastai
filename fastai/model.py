@@ -156,6 +156,9 @@ class IterBatch():
             self.idx=0
         return res
 
+def no_grad_context():
+    return torch.no_grad() if torch.__version__ >= 0.4 else contextlib.suppress()
+
 def validate_next(stepper, metrics, val_iter):
     """Computes the loss on the next minibatch of the validation set."""
     stepper.reset(False)
@@ -169,7 +172,7 @@ def validate_next(stepper, metrics, val_iter):
 def validate(stepper, dl, metrics):
     batch_cnts,loss,res = [],[],[]
     stepper.reset(False)
-    with torch.no_grad():
+    with no_grad_context():
         for (*x,y) in iter(dl):
             y = VV(y)
             preds,l = stepper.evaluate(VV(x), y)
