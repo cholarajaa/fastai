@@ -155,9 +155,10 @@ class IterBatch():
             self.iter = iter(self.dl)
             self.idx=0
         return res
+from distutils.version import LooseVersion
 
 def no_grad_context():
-    return torch.no_grad() if torch.__version__ >= 0.4 else contextlib.suppress()
+    return torch.no_grad() if LooseVersion(torch.__version__) >= LooseVersion('0.4') else contextlib.suppress()
 
 def validate_next(stepper, metrics, val_iter):
     """Computes the loss on the next minibatch of the validation set."""
@@ -179,7 +180,7 @@ def validate(stepper, dl, metrics):
             if isinstance(x,list): batch_cnts.append(len(x[0]))
             else: batch_cnts.append(len(x))
             loss.append(to_np(l))
-            res.append([f(preds.data,y) for f in metrics])
+            res.append([f(preds.data,y.data) for f in metrics])
     return [np.average(loss, 0, weights=batch_cnts)] + list(np.average(np.stack(res), 0, weights=batch_cnts))
 
 def get_prediction(x):
